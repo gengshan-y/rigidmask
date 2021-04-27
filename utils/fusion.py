@@ -6,7 +6,10 @@ def pcwrite(filename, xyzrgb):
   """Save a point cloud to a polygon .ply file.
   """
   xyz = xyzrgb[:, :3]
-  rgb = xyzrgb[:, 3:].astype(np.uint8)
+  if xyzrgb.shape[1] > 3:
+    rgb = xyzrgb[:, 3:].astype(np.uint8)
+  else:
+    rgb = np.ones(xyz.shape)
 
   # Write header
   ply_file = open(filename,'w')

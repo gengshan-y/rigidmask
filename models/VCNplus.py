@@ -711,6 +711,18 @@ class VCN(nn.Module):
             p03d = pts[:,:,:p03d.shape[-1]]
             p13d = pts[:,:,p03d.shape[-1]:]
 
+            #pdb.set_trace()
+            #cv2.imwrite('./0.png',  np.asarray(1*(mcost00+mcost01).view(bs,1,h,w).detach().cpu()[0,0]))
+            #cv2.imwrite('./1.png',         np.asarray(1e6*(mcost1).view(bs,1,h,w).detach().cpu()[0,0]))
+            #cv2.imwrite('./2.png',         np.asarray(1e2*(mcost4).view(bs,1,h,w).detach().cpu()[0,0]))
+            #cv2.imwrite('./3.png',        np.asarray(2*(unc[:,:1]).view(bs,1,h,w).detach().cpu()[0,0]))
+            #cv2.imwrite('./4.png',        np.asarray(2*(unc[:,1:].abs()).view(bs,1,h,w).detach().cpu()[0,0]))
+            #cv2.imwrite('./5.png',         np.asarray(100*(log_dratio).view(bs,1,h,w).detach().cpu()[0,0]))
+            #from utils.fusion import pcwrite
+            #pcwrite('./0.ply', np.asarray(p03d.cpu()[0].T))
+            #pcwrite('./1.ply', np.asarray(p13d.cpu()[0].T))
+
+
             # fg/bg segmentation network
             # the constants are empirical values multiplied to cost maps to 
             # ensure they have similar scales

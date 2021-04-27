@@ -10,11 +10,11 @@ Visuals on Sintel/KITTI/Coral (not temporally smoothed):
 
 If you find this work useful, please consider citing:
 ```
-@article{yang2021rigidmask,
-  title={Learning to Segment Rigid Motions from Two Frames},
-  author={Yang, Gengshan and Ramanan, Deva},
-  journal={arXiv preprint arXiv:2101.03694},
-  year={2021}
+@inproceedings{yang2021rigidmask,
+title={Learning to Segment Rigid Motions from Two Frames},
+author={Yang, Gengshan and Ramanan, Deva},
+booktitle={CVPR},
+year={2021}
 }
 ```
 

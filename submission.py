@@ -372,6 +372,10 @@ def main():
             save_pfm(f,flow[::-1].astype(np.float32))
         flowvis = point_vec(imgL_o, flow)
         cv2.imwrite('%s/%s/visflo-%s.jpg'% (args.outdir, args.dataset,idxname),flowvis)
+        imwarped = ddlib.warp_flow(imgR_o, flow[:,:,:2])
+        cv2.imwrite('%s/%s/warp-%s.jpg'% (args.outdir, args.dataset,idxname),imwarped[:,:,::-1])
+        cv2.imwrite('%s/%s/warpt-%s.jpg'% (args.outdir, args.dataset,idxname),imgL_o[:,:,::-1])
+        cv2.imwrite('%s/%s/warps-%s.jpg'% (args.outdir, args.dataset,idxname),imgR_o[:,:,::-1])
         with open('%s/%s/occ-%s.pfm'% (args.outdir, args.dataset,idxname),'w') as f:
             save_pfm(f,occ[::-1].astype(np.float32))
         with open('%s/%s/exp-%s.pfm'% (args.outdir, args.dataset,idxname),'w') as f:
