@@ -47,11 +47,11 @@ parser.add_argument('--stage', default='expansion',
 parser.add_argument('--nproc', type=int, default=1,
                     help='number of process to use (default 1)')
 parser.add_argument('--ngpus', type=int, default=1,
-                    help='number of gpus to use (default 1)')
+                    help='(deprecated) number of gpus to use before ddp (default 1)')
 parser.add_argument('--itersave', default='./',
                     help='a dir to save iteration counts (default ./)')
-parser.add_argument('--niter', type=int ,default=40000,
-                    help='maximum iteration (default 40k)')
+parser.add_argument('--niter', type=int ,default=300000,
+                    help='maximum iteration (default 300k)')
 parser.add_argument('--local_rank', type=int, default=0)
 args = parser.parse_args()
 
@@ -244,11 +244,13 @@ if 'expansion' in args.stage:
     baselr = 1e-3
     num_steps = 7e4
 elif 'seg' in args.stage:
-    #data_inuse = torch.utils.data.ConcatDataset([loader_driving_sc]*200+[loader_things_sc]*40)
-    data_inuse = torch.utils.data.ConcatDataset([loader_driving_sc]*200+[loader_monkaa_sc]*100+[loader_things_sc]*40)
-    #data_inuse = torch.utils.data.ConcatDataset([loader_kitti15_sc]*22000)
-    #data_inuse = torch.utils.data.ConcatDataset([loader_driving_sc]*200+[loader_things_sc]*40 + [loader_kitti15_sc]*22000)
-    #data_inuse = torch.utils.data.ConcatDataset([loader_driving_sc]*200+[loader_monkaa_sc]*100+[loader_things_sc]*40 + [loader_kitti15_sc]*22000)
+    if args.stage=='segsf':
+        #data_inuse = torch.utils.data.ConcatDataset([loader_driving_sc]*200+[loader_things_sc]*40)
+        data_inuse = torch.utils.data.ConcatDataset([loader_driving_sc]*200+[loader_monkaa_sc]*100+[loader_things_sc]*40)
+    elif args.stage=='segkitti':
+        #data_inuse = torch.utils.data.ConcatDataset([loader_kitti15_sc]*22000)
+        #data_inuse = torch.utils.data.ConcatDataset([loader_driving_sc]*200+[loader_things_sc]*40 + [loader_kitti15_sc]*22000)
+        data_inuse = torch.utils.data.ConcatDataset([loader_driving_sc]*200+[loader_monkaa_sc]*100+[loader_things_sc]*40 + [loader_kitti15_sc]*22000)
     for i in data_inuse.datasets:
         i.black = False
         i.cover = True

@@ -126,7 +126,7 @@ gdown https://drive.google.com/uc?id=11F_dI6o37nzA9B5V7OT-UwAl66LWlu-4 -O ./weig
 To train the rigidmask-sf model, run
 ```
 datapath=path-to-data-dir
-CUDA_VISIBLE_DEVICES=0,1,2,3 python -m torch.distributed.launch --nproc_per_node=4 train.py --logname logname --database $datapath --savemodel ./weights --niter 300000 --stage seg --ngpus 1 --nproc 4 --loadmodel ./weights/flowexp-sf.pth
+CUDA_VISIBLE_DEVICES=0,1,2,3 python -m torch.distributed.launch --nproc_per_node=4 train.py --logname logname --database $datapath --savemodel ./weights --stage segsf --nproc 4 --loadmodel ./weights/flowexp-sf.pth
 ```
 
 ### Training on synthetic dataset + KITTI
@@ -138,7 +138,7 @@ gdown https://drive.google.com/uc?id=11F_dI6o37nzA9B5V7OT-UwAl66LWlu-4 -O ./weig
 To train the rigidmask-kitti model, run
 ```
 datapath=path-to-data-dir
-CUDA_VISIBLE_DEVICES=0,1,2,3 python -m torch.distributed.launch --nproc_per_node=4 train.py --logname logname --database $datapath --savemodel ./weights --niter 300000 --stage seg --ngpus 1 --nproc 4 --loadmodel ./weights/flowexp-kitti.pth
+CUDA_VISIBLE_DEVICES=0,1,2,3 python -m torch.distributed.launch --nproc_per_node=4 train.py --logname logname --database $datapath --savemodel ./weights --stage segkitti --nproc 4 --loadmodel ./weights/flowexp-kitti.pth
 ```
 
 ## Acknowledge (incomplete)
