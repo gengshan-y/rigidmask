@@ -69,7 +69,7 @@ gdown https://drive.google.com/uc?id=1sbu6zVeiiK1Ra1vp_ioyy1GCv_Om_WqY -O ./weig
 |[rigidmask-sf (mono)](https://drive.google.com/uc?id=1KMEqXlisLgK4n9alWRbgIWch7TTye56u)          | SF         | C+SF+V        | 10.9%/3.128px    | 120.4 | 90.71%/97.05%/86.72% |
 |[rigidmask-kitti (stereo)](https://drive.google.com/uc?id=11Cf3NxbzGq2rdwdI2_HuQDlwIWNWMu7u)     | SF+KITTI   | C+SF+V->KITTI | 4.1%/1.155px | 49.7  | 95.58%/98.91%/-  |
 
-** C: FlythingChairs, SF(SceneFlow including FlyingThings, Monkaa, and Driving, K: KITTI scene flow training set, V: VIPER, S: Sintel.
+** C: FlythingChairs, SF(SceneFlow including FlyingThings, Monkaa, and Driving, K: KITTI scene flow training set, V: VIPER, S: Sintel. Averaged over the 200 annotated KITTI pairs.
 
 ## Inference
 Run and visualize rigid segmentation of coral reef video, (pass --refine to turn on rigid motion refinement). Results will be saved at `./weights/$modelname/seq/` and a output-seg.gif file will be generated in the current folder.
@@ -116,7 +116,30 @@ mkdir ./benchmark_output
 CUDA_VISIBLE_DEVICES=1 python submission.py --dataset 2015test --datapath path-to-kitti-sceneflow-images  --outdir ./weights/$modelname/ --loadmodel ./weights/$modelname/weights.pth  --disp_path input/disp/kittisf-test-ganet-disp/ --fac 2 --maxdisp 512 --refine --sensor stereo
 ```
 
-## Training (todo)
+## Training (TODO)
+### Training on synthetic dataset
+First download and unzip the [scene flow dataset](https://lmb.informatik.uni-freiburg.de/resources/datasets/SceneFlowDatasets.en.html) under the same folder. You'll need RGB images, camera data, object segmentation, disparity, disparity change, and optical flow. It takes 1~2 TB space.
+Then download the pre-trained optical flow and expansion network (trained on synthetic datasets)
+```
+gdown https://drive.google.com/uc?id=11F_dI6o37nzA9B5V7OT-UwAl66LWlu-4 -O ./weights/flowexp-sf.pth
+```
+To train the rigidmask-sf model, run
+```
+datapath=path-to-data-dir
+CUDA_VISIBLE_DEVICES=0,1,2,3 python -m torch.distributed.launch --nproc_per_node=4 train.py --logname logname --database $datapath --savemodel ./weights --niter 300000 --stage seg --ngpus 1 --nproc 4 --loadmodel ./weights/flowexp-sf.pth
+```
+
+### Training on synthetic dataset + KITTI
+First place the KITTI-SF dataset under the same folder as the scene flow dataset.
+Then download the pre-trained optical flow and expansion network (trained on synthetic datasets and fine-tuned on KITTI).
+```
+gdown https://drive.google.com/uc?id=11F_dI6o37nzA9B5V7OT-UwAl66LWlu-4 -O ./weights/flowexp-kitti.pth
+```
+To train the rigidmask-kitti model, run
+```
+datapath=path-to-data-dir
+CUDA_VISIBLE_DEVICES=0,1,2,3 python -m torch.distributed.launch --nproc_per_node=4 train.py --logname logname --database $datapath --savemodel ./weights --niter 300000 --stage seg --ngpus 1 --nproc 4 --loadmodel ./weights/flowexp-kitti.pth
+```
 
 ## Acknowledge (incomplete)
 * Source of coral reef video: [Beautiful Dive in Philippines Tubbataha Atoll Coral Reef Natural Park & Whale Shark in Sulu Sea HD.](https://www.youtube.com/watch?v=799y7KxZ3Iw)

@@ -12,6 +12,7 @@ dependencies:
   - cairo=1.14.12=h8948797_3
   - certifi=2020.11.8=py38h578d9bd_0
   - cudatoolkit=10.2.89=hfd86e86_1
+  - cudatoolkit-dev=11.4.0=py38h497a2fe_1
   - cycler=0.10.0=py38_0
   - dbus=1.13.18=hb2f20db_0
   - expat=2.2.10=he6710b0_2
