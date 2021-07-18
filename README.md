@@ -133,7 +133,8 @@ CUDA_VISIBLE_DEVICES=0,1,2,3 python -m torch.distributed.launch --nproc_per_node
 First place the KITTI-SF dataset under the same folder as the scene flow dataset.
 Then download the pre-trained optical flow and expansion network (trained on synthetic datasets and fine-tuned on KITTI).
 ```
-gdown https://drive.google.com/uc?id=11F_dI6o37nzA9B5V7OT-UwAl66LWlu-4 -O ./weights/flowexp-kitti.pth
+gdown https://drive.google.com/uc?id=1uWPvL71KXeFY0U4wFluJfYJdcFfwEH_G -O ./weights/flowexp-kitti.pth
+      
 ```
 To train the rigidmask-kitti model, run
 ```

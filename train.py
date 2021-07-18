@@ -394,10 +394,11 @@ def train(imgL,imgR,flowl0,imgAux,intr, imgoL, imgoR, occp, RT01):
 #        loss.backward()
 #        #torch.nn.utils.clip_grad_norm_(model.parameters(), 100.0)
 #        optimizer.step()
-
+   
+        # for debugging 
         if np.isnan(np.asarray(model.module.dc2_conv7.weight.max().detach().cpu())):
             pdb.set_trace()
-            output = modela(torch.cat([imgL,imgR],0))
+            pass
 
         vis = {}
         vis['output2'] = output[0].detach().cpu().numpy()
@@ -500,7 +501,6 @@ def main():
                 }, savefilename)
         
     print('full finetune time = %.2f HR' %((time.time() - start_full_time)/3600))
-    print(max_epo)
 
 
 if __name__ == '__main__':
