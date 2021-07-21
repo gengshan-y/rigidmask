@@ -130,7 +130,9 @@ CUDA_VISIBLE_DEVICES=0,1,2,3 python -m torch.distributed.launch --nproc_per_node
 ```
 
 ### Training on synthetic dataset + KITTI
-First place the KITTI-SF dataset under the same folder as the scene flow dataset.
+First download and place the KITTI-SF dataset under the same folder as the scene flow dataset.
+The pre-computed relative camera poses of KITTI-SF can be downloaded [here](https://drive.google.com/file/d/1SzCVKM7Sv1QMGto9EpDBXhkXAnBrd1yV/view?usp=sharing), and placed under`kitti_scene/training/`.
+
 Then download the pre-trained optical flow and expansion network (trained on synthetic datasets and fine-tuned on KITTI).
 ```
 gdown https://drive.google.com/uc?id=1uWPvL71KXeFY0U4wFluJfYJdcFfwEH_G -O ./weights/flowexp-kitti.pth
