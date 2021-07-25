@@ -112,22 +112,22 @@ if 'expansion' in args.stage:
         disp0 = [i.replace('flow_occ','disp_occ_0') for i in flowl0]
         disp1 = [i.replace('flow_occ','disp_occ_1') for i in flowl0]
         calib = [i.replace('flow_occ','calib')[:-7]+'.txt' for i in flowl0]
-        loader_kitti15_sc = dd.myImageFloder(iml0,iml1,flowl0, shape=datashape, scale=1, order=0,prob=0.5,sc=True,disp0=disp0, disp1=disp1, calib=calib)
+        loader_kitti15_sc = dd.myImageFloder(iml0,iml1,flowl0, shape=datashape, scale=1, order=0,prob=0.5,disp0=disp0, disp1=disp1, calib=calib)
     else:
         from dataloader import sceneflowlist as lsf
         iml0, iml1, flowl0, disp0, dispc, calib = lsf.dataloader('%s/Driving/'%args.database, level=6)
-        loader_driving_sc = dd.myImageFloder(iml0,iml1,flowl0, shape=datashape, sc=True,disp0=disp0,disp1=dispc,calib=calib)
+        loader_driving_sc = dd.myImageFloder(iml0,iml1,flowl0, shape=datashape, disp0=disp0,disp1=dispc,calib=calib)
         iml0, iml1, flowl0, disp0, dispc, calib = lsf.dataloader('%s/Monkaa/'%args.database, level=4)
-        loader_monkaa_sc = dd.myImageFloder(iml0,iml1,flowl0, shape=datashape, sc=True,disp0=disp0,disp1=dispc,calib=calib)
+        loader_monkaa_sc = dd.myImageFloder(iml0,iml1,flowl0, shape=datashape, disp0=disp0,disp1=dispc,calib=calib)
         iml0, iml1, flowl0, disp0, dispc, calib = lsf.dataloader('/ssd1/gengshay/FlyingThings3D/', level=6)
-        loader_things_sc = dd.myImageFloder(iml0,iml1,flowl0, shape=datashape, sc=True,disp0=disp0,disp1=dispc,calib=calib)
+        loader_things_sc = dd.myImageFloder(iml0,iml1,flowl0, shape=datashape, disp0=disp0,disp1=dispc,calib=calib)
         # kitti
         from dataloader import kitti15list_train as lk15
         iml0, iml1, flowl0 = lk15.dataloader('%s/kitti_scene/training/'%args.database)
         disp0 = [i.replace('flow_occ','disp_occ_0') for i in flowl0]
         disp1 = [i.replace('flow_occ','disp_occ_1') for i in flowl0]
         calib = [i.replace('flow_occ','calib')[:-7]+'.txt' for i in flowl0]
-        loader_kitti15_sc = dd.myImageFloder(iml0,iml1,flowl0, shape=datashape, scale=1, order=0,prob=0.5,sc=True,disp0=disp0, disp1=disp1, calib=calib)
+        loader_kitti15_sc = dd.myImageFloder(iml0,iml1,flowl0, shape=datashape, scale=1, order=0,prob=0.5,disp0=disp0, disp1=disp1, calib=calib)
         # sintel
         from dataloader import sintellist_train as ls
         iml0, iml1, flowl0 = ls.dataloader('%s/rob_flow/training/'%args.database)
@@ -140,16 +140,16 @@ if 'expansion' in args.stage:
             disp0.append('%s/Sintel/disparities/%s_%s/frame_%04d.png'%(impath.rsplit('/',2)[0], seqname1, seqname2,framename+1))
             disp1.append('%s/Sintel/disparities/%s_%s/frame_%04d.png'%(impath.rsplit('/',2)[0], seqname1, seqname2,framename+2))
             calib.append('%s/Sintel/camdata_left/%s_%s/frame_%04d.cam'%(impath.rsplit('/',2)[0], seqname1,seqname2,framename+1))
-        loader_sintel_sc = dd.myImageFloder(iml0,iml1,flowl0, shape=datashape, scale=1, order=1, noise=0, sc=True,disp0=disp0, disp1=disp1, calib=calib)
+        loader_sintel_sc = dd.myImageFloder(iml0,iml1,flowl0, shape=datashape, scale=1, order=1, noise=0, disp0=disp0, disp1=disp1, calib=calib)
 elif 'seg' in args.stage:
     from dataloader import exploader as dd
     from dataloader import sceneflowlist as lsf
     iml0, iml1, flowl0, disp0, dispc, calib = lsf.dataloader('%s/Driving/'%args.database, level=6)
-    loader_driving_sc = dd.myImageFloder(iml0,iml1,flowl0, shape=datashape, sc=True,disp0=disp0,disp1=dispc,calib=calib)
+    loader_driving_sc = dd.myImageFloder(iml0,iml1,flowl0, shape=datashape, disp0=disp0,disp1=dispc,calib=calib)
     iml0, iml1, flowl0, disp0, dispc, calib = lsf.dataloader('%s/Monkaa/'%args.database, level=4)
-    loader_monkaa_sc = dd.myImageFloder(iml0,iml1,flowl0, shape=datashape, sc=True,disp0=disp0,disp1=dispc,calib=calib)
+    loader_monkaa_sc = dd.myImageFloder(iml0,iml1,flowl0, shape=datashape, disp0=disp0,disp1=dispc,calib=calib)
     iml0, iml1, flowl0, disp0, dispc, calib = lsf.dataloader('%s/FlyingThings3D/', level=6)
-    loader_things_sc = dd.myImageFloder(iml0,iml1,flowl0, shape=datashape, sc=True,disp0=disp0,disp1=dispc,calib=calib)
+    loader_things_sc = dd.myImageFloder(iml0,iml1,flowl0, shape=datashape, disp0=disp0,disp1=dispc,calib=calib)
     # kitti
     from dataloader import kitti15list as lk15
     iml0, iml1, flowl0 = lk15.dataloader('%s/kitti_scene/training/'%args.database)
@@ -158,7 +158,7 @@ elif 'seg' in args.stage:
     calib = [i.replace('flow_occ','calib')[:-7]+'.txt' for i in flowl0]
     # dense disp
     disp0 = [i.replace('disp_occ_0','disp_occ_0_ganet') for i in disp0]
-    loader_kitti15_sc = dd.myImageFloder(iml0,iml1,flowl0, shape=datashape, scale=1, order=0,prob=0.5,sc=True,disp0=disp0, disp1=disp1, calib=calib)
+    loader_kitti15_sc = dd.myImageFloder(iml0,iml1,flowl0, shape=datashape, scale=1, order=0,prob=0.5,disp0=disp0, disp1=disp1, calib=calib)
 else: # flow
     from dataloader import robloader as dr
     if args.stage == 'chairs' or 'sintel' in args.stage or args.stage=='rob':

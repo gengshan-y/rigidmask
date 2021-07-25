@@ -824,7 +824,7 @@ class VCN(nn.Module):
                 # mask
                 valid_mask = (disc_aux[2][:,:,:,0]<100) & disc_aux[1]  # depth<100 and valid for flow
                 Tglobal_gt = -disc_aux[-2][:,3:,np.newaxis,np.newaxis] # bg translation
-                Tlocal_gt = disc_aux[2][:,:,:,1:4].permute(0,3,1,2)  # pixel translation (after rot)
+                Tlocal_gt = disc_aux[2][:,:,:,1:4].permute(0,3,1,2)  # point translation (after removing rotation)
                 m3d_gt = (Tlocal_gt-Tglobal_gt).norm(2,1)           # abs. motion
                 for i in range(bs):
                     if Tglobal_gt[i].norm().abs()==1: # kitti

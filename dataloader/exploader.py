@@ -58,7 +58,7 @@ def triangulation(disp, xcoord, ycoord, bl=1, fl = 450, cx = 479.5, cy = 269.5):
     return P
 
 class myImageFloder(data.Dataset):
-    def __init__(self, iml0, iml1, flowl0, loader=default_loader, dploader= flow_loader, scale=1.,shape=[320,448], order=1, noise=0.06, pca_augmentor=True, prob = 1.,sc=False,disp0=None,disp1=None,calib=None ):
+    def __init__(self, iml0, iml1, flowl0, loader=default_loader, dploader= flow_loader, scale=1.,shape=[320,448], order=1, noise=0.06, pca_augmentor=True, prob = 1.,disp0=None,disp1=None,calib=None ):
         self.iml0 = iml0
         self.iml1 = iml1
         self.flowl0 = flowl0
@@ -70,7 +70,6 @@ class myImageFloder(data.Dataset):
         self.noise = noise
         self.pca_augmentor = pca_augmentor
         self.prob = prob
-        self.sc = sc
         self.disp0 = disp0
         self.disp1 = disp1
         self.calib = calib
@@ -85,150 +84,132 @@ class myImageFloder(data.Dataset):
         iml1 = self.loader(iml1)
 
         # get disparity
-        if self.sc:
-            flowl0 = self.dploader(flowl0)
-            flowl0[:,:,-1][flowl0[:,:,0]==np.inf]=0  # for gtav window pfm files
-            flowl0[:,:,0][~flowl0[:,:,2].astype(bool)]=0
-            flowl0[:,:,1][~flowl0[:,:,2].astype(bool)]=0  # avoid nan in grad
-            flowl0 = np.ascontiguousarray(flowl0,dtype=np.float32)
-            flowl0[np.isnan(flowl0)] = 1e6 # set to max
-            if 'camera_data.txt' in self.calib[index]:
-                bl=1
-                if '15mm_' in self.calib[index]: 
-                    fl=450 # 450
-                else:
-                    fl=1050
-                cx = 479.5
-                cy = 269.5
-                # negative disp
-                d1 = np.abs(disparity_loader(self.disp0[index]))
-                d2 = np.abs(disparity_loader(self.disp1[index]) + d1)
-            elif 'Sintel' in self.calib[index]:
-                K0,_ = cam_read(self.calib[index])
-                fl = K0[0,0]
-                bl = 0.1
-                cx=K0[0,2]
-                cy=K0[1,2]
-                d1 = disparity_read(self.disp0[index])
-                d2_nf = disparity_read(self.disp1[index])
-
-                shape = d1.shape
-                x0,y0=np.meshgrid(range(shape[1]),range(shape[0]))
-                x0=x0.astype(np.float32)
-                y0=y0.astype(np.float32)
-                x1=x0+flowl0[:,:,0]
-                y1=y0+flowl0[:,:,1]
-                d2 = cv2.remap(d2_nf,x1,y1,cv2.INTER_LINEAR)
-                re_iml1 = cv2.remap(np.asarray(iml1),x1,y1,cv2.INTER_LINEAR)
-                d2[np.logical_or(d2<0, np.linalg.norm(np.asarray(iml0)-re_iml1,axis=2)>50)]=0
-            elif self.calib[index] == 'udf':
-                fl = 1
-                cx = 0
-                cy = 0
-                bl = 1
-                d1 = 100./disparity_loader(self.disp0[index])
-                d2_nf = 100./disparity_loader(self.disp1[index])
-                shape = d1.shape
-                x0,y0=np.meshgrid(range(shape[1]),range(shape[0]))
-                x0=x0.astype(np.float32)
-                y0=y0.astype(np.float32)
-                x1=x0+flowl0[:,:,0]
-                y1=y0+flowl0[:,:,1]
-                d2 = cv2.remap(d2_nf,x1,y1,cv2.INTER_LINEAR)
-                re_iml1 = cv2.remap(np.asarray(iml1),x1,y1,cv2.INTER_LINEAR)
-                d2[np.logical_or(d2<0, np.linalg.norm(np.asarray(iml0)-re_iml1,axis=2)>50)]=0
-                cv2.imwrite('/data/gengshay/0.png', d1)
-                cv2.imwrite('/data/gengshay/1.png', d2)
+        flowl0 = self.dploader(flowl0)
+        flowl0[:,:,-1][flowl0[:,:,0]==np.inf]=0  # for gtav window pfm files
+        flowl0[:,:,0][~flowl0[:,:,2].astype(bool)]=0
+        flowl0[:,:,1][~flowl0[:,:,2].astype(bool)]=0  # avoid nan in grad
+        flowl0 = np.ascontiguousarray(flowl0,dtype=np.float32)
+        flowl0[np.isnan(flowl0)] = 1e6 # set to max
+        if 'camera_data.txt' in self.calib[index]: # synthetic scene flow
+            bl=1
+            if '15mm_' in self.calib[index]: 
+                fl=450 # 450
             else:
-                ints = load_calib_cam_to_cam(self.calib[index])
-                fl = ints['K_cam2'][0,0]
-                cx = ints['K_cam2'][0,2]
-                cy = ints['K_cam2'][1,2]
-                bl = ints['b20']-ints['b30']
-                d1 = disparity_loader(self.disp0[index])
-                d2 = disparity_loader(self.disp1[index])
-            #flowl0[:,:,2] = (flowl0[:,:,2]==1).astype(float)
-            flowl0[:,:,2] = np.logical_and(np.logical_and(flowl0[:,:,2]==1, d1!=0), d2!=0).astype(float)
+                fl=1050
+            cx = 479.5
+            cy = 269.5
+            # negative disp
+            d1 = np.abs(disparity_loader(self.disp0[index]))
+            d2 = np.abs(disparity_loader(self.disp1[index]) + d1)
+        elif 'Sintel' in self.calib[index]:
+            K0,_ = cam_read(self.calib[index])
+            fl = K0[0,0]
+            bl = 0.1
+            cx=K0[0,2]
+            cy=K0[1,2]
+            d1 = disparity_read(self.disp0[index])
+            d2_nf = disparity_read(self.disp1[index])
 
             shape = d1.shape
-            mesh = np.meshgrid(range(shape[1]),range(shape[0]))
-            xcoord = mesh[0].astype(float)
-            ycoord = mesh[1].astype(float)
-            
-            # triangulation in two frames
-            P0 = triangulation(d1, xcoord, ycoord, bl=bl, fl = fl, cx = cx, cy = cy)
-            P1 = triangulation(d2, xcoord + flowl0[:,:,0], ycoord + flowl0[:,:,1], bl=bl, fl = fl, cx = cx, cy = cy)
-            dis0 = P0[2]
-            dis1 = P1[2]
-
-            change_size =  dis0.reshape(shape).astype(np.float32)
-            flow3d = (P1-P0)[:3].reshape((3,)+shape).transpose((1,2,0))
-
-            gt_normal = np.concatenate((d1[:,:,np.newaxis],d2[:,:,np.newaxis],d2[:,:,np.newaxis]),-1)
-            change_size = np.concatenate((change_size[:,:,np.newaxis],gt_normal,flow3d),2)
-
-            # add rectified 3D flow
-            if ('_R.pfm' in self.flowl0[index]) or ('_L.pfm' in self.flowl0[index]):
-                # from https://github.com/Wallacoloo/printipi
-                fid = int(self.flowl0[index].split('/')[-1].split('_')[1])
-                with open(self.calib[index],'r') as f:
-                    fid = fid - int(f.readline().split(' ')[-1])
-                # extrinsics
-                l_exts,r_exts= load_exts(self.calib[index])
-                if '/right/' in self.iml0[index]:
-                    exts = r_exts
-                else:
-                    exts = l_exts
-                if '/into_future/' in self.flowl0[index]:
-                    if (fid+1)>len(exts)-1: print(self.flowl0[index])
-                    if (fid)>len(exts)-1: print(self.flowl0[index])
-                    ext1 = exts[fid+1]
-                    ext0 = exts[fid]
-                else:
-                    if (fid-1)>len(exts)-1: print(self.flowl0[index])
-                    if (fid)>len(exts)-1: print(self.flowl0[index])
-                    ext1 = exts[fid-1]
-                    ext0 = exts[fid]
-                camT = np.eye(4); camT[1,1]=-1; camT[2,2]=-1
-                RT01 = camT.dot(np.linalg.inv(ext0)).dot(ext1).dot(camT)
-            elif 'kitti_scene' in self.iml0[index]: # kitti:
-                RT01 = np.loadtxt(self.iml0[index].replace('image_2', 'pose').replace('.png', '.txt'))
-            elif 'info.pkl' in self.calib[index]: # refresh:
-                fid = int(self.flowl0[index].split('/')[-1].split('.')[0])
-                RT01 = np.linalg.inv(infofile['pose'][fid]).dot(infofile['pose'][fid-1])  # backward camera motion
-            else:
-                RT01 = np.eye(4); RT01[2,-1] = 1.
-
-            p3d = (RT01[:3,:3].dot(P1[:3])-P0[:3]).reshape((3,)+shape).transpose((1,2,0))
-            change_size[:,:,1:4] = p3d
-            RT01 = np.concatenate((cv2.Rodrigues(RT01[:3,:3])[0][:,0],RT01[:3,-1])).astype(np.float32)
-            
-            # append obj mask
-            if 'kitti_scene' in self.iml0[index]:
-                fnum = int(self.iml0[index].split('/')[-1].split('_')[0])
-                obj_fname = self.iml0[index].replace('image_2', 'obj_map')
-                #obj_fname = '/home/gengshay/moseg-detectron2/%06d.png'%(fnum)
-                obj_idx = cv2.imread(obj_fname,0)
-            else:
-                fnum = int(self.iml0[index].split('/')[-1].split('.png')[0])
-                obj_fname = '%s/%04d.pfm'%(self.flowl0[index].replace('/optical_flow','object_index').replace('into_past/','/').replace('into_future/','/').rsplit('/',1)[0],fnum)
-                obj_idx = disparity_loader(obj_fname)
-            change_size = np.concatenate((change_size,obj_idx[:,:,np.newaxis]),2)
-        else:
-            shape = iml0.size
-            shape=[shape[1],shape[0]]
-            flowl0 = np.zeros((shape[0],shape[1],3))
-            change_size = np.zeros((shape[0],shape[1],7))
-            depth = disparity_loader(self.iml1[index].replace('camera','groundtruth'))
-            change_size[:,:,0] = depth
-
-            seqid = self.iml0[index].split('/')[-5].rsplit('_',3)[0]
-            ints = load_calib_cam_to_cam('/data/gengshay/KITTI/%s/calib_cam_to_cam.txt'%seqid)
+            x0,y0=np.meshgrid(range(shape[1]),range(shape[0]))
+            x0=x0.astype(np.float32)
+            y0=y0.astype(np.float32)
+            x1=x0+flowl0[:,:,0]
+            y1=y0+flowl0[:,:,1]
+            d2 = cv2.remap(d2_nf,x1,y1,cv2.INTER_LINEAR)
+            re_iml1 = cv2.remap(np.asarray(iml1),x1,y1,cv2.INTER_LINEAR)
+            d2[np.logical_or(d2<0, np.linalg.norm(np.asarray(iml0)-re_iml1,axis=2)>50)]=0
+        elif self.calib[index] == 'udf': # undefined dataset
+            fl = 1
+            cx = 0
+            cy = 0
+            bl = 1
+            d1 = 100./disparity_loader(self.disp0[index])
+            d2_nf = 100./disparity_loader(self.disp1[index])
+            shape = d1.shape
+            x0,y0=np.meshgrid(range(shape[1]),range(shape[0]))
+            x0=x0.astype(np.float32)
+            y0=y0.astype(np.float32)
+            x1=x0+flowl0[:,:,0]
+            y1=y0+flowl0[:,:,1]
+            d2 = cv2.remap(d2_nf,x1,y1,cv2.INTER_LINEAR)
+            re_iml1 = cv2.remap(np.asarray(iml1),x1,y1,cv2.INTER_LINEAR)
+            d2[np.logical_or(d2<0, np.linalg.norm(np.asarray(iml0)-re_iml1,axis=2)>50)]=0
+            cv2.imwrite('/data/gengshay/0.png', d1)
+            cv2.imwrite('/data/gengshay/1.png', d2)
+        else: # kitti
+            ints = load_calib_cam_to_cam(self.calib[index])
             fl = ints['K_cam2'][0,0]
             cx = ints['K_cam2'][0,2]
             cy = ints['K_cam2'][1,2]
             bl = ints['b20']-ints['b30']
+            d1 = disparity_loader(self.disp0[index])
+            d2 = disparity_loader(self.disp1[index])
+        #flowl0[:,:,2] = (flowl0[:,:,2]==1).astype(float)
+        flowl0[:,:,2] = np.logical_and(np.logical_and(flowl0[:,:,2]==1, d1!=0), d2!=0).astype(float)
 
+        shape = d1.shape
+        mesh = np.meshgrid(range(shape[1]),range(shape[0]))
+        xcoord = mesh[0].astype(float)
+        ycoord = mesh[1].astype(float)
+        
+        # triangulation in two frames
+        P0 = triangulation(d1, xcoord, ycoord, bl=bl, fl = fl, cx = cx, cy = cy)
+        P1 = triangulation(d2, xcoord + flowl0[:,:,0], ycoord + flowl0[:,:,1], bl=bl, fl = fl, cx = cx, cy = cy)
+        depth0 = P0[2]
+        depth1 = P1[2]
+
+        # first frame depth and 3d flow
+        depth0 =  depth0.reshape(shape).astype(np.float32)
+        flow3d = (P1-P0)[:3].reshape((3,)+shape).transpose((1,2,0))
+
+        # add rectified 3D flow
+        if ('_R.pfm' in self.flowl0[index]) or ('_L.pfm' in self.flowl0[index]): # synthetic scene flow
+            # from https://github.com/Wallacoloo/printipi
+            fid = int(self.flowl0[index].split('/')[-1].split('_')[1])
+            with open(self.calib[index],'r') as f:
+                fid = fid - int(f.readline().split(' ')[-1])
+            # extrinsics
+            l_exts,r_exts= load_exts(self.calib[index])
+            if '/right/' in self.iml0[index]:
+                exts = r_exts
+            else:
+                exts = l_exts
+            if '/into_future/' in self.flowl0[index]:
+                if (fid+1)>len(exts)-1: print(self.flowl0[index])
+                if (fid)>len(exts)-1: print(self.flowl0[index])
+                ext1 = exts[fid+1]
+                ext0 = exts[fid]
+            else:
+                if (fid-1)>len(exts)-1: print(self.flowl0[index])
+                if (fid)>len(exts)-1: print(self.flowl0[index])
+                ext1 = exts[fid-1]
+                ext0 = exts[fid]
+            camT = np.eye(4); camT[1,1]=-1; camT[2,2]=-1
+            RT01 = camT.dot(np.linalg.inv(ext0)).dot(ext1).dot(camT)
+        elif 'kitti_scene' in self.iml0[index]: # kitti:
+            RT01 = np.loadtxt(self.iml0[index].replace('image_2', 'pose').replace('.png', '.txt'))
+        elif 'info.pkl' in self.calib[index]: # refresh:
+            fid = int(self.flowl0[index].split('/')[-1].split('.')[0])
+            RT01 = np.linalg.inv(infofile['pose'][fid]).dot(infofile['pose'][fid-1])  # backward camera motion
+        else:
+            RT01 = np.eye(4); RT01[2,-1] = 1.
+        rect_flow3d = (RT01[:3,:3].dot(P1[:3])-P0[:3]).reshape((3,)+shape).transpose((1,2,0))
+
+        depthflow = np.concatenate((depth0[:,:,np.newaxis],rect_flow3d,flow3d),2)
+        RT01 = np.concatenate((cv2.Rodrigues(RT01[:3,:3])[0][:,0],RT01[:3,-1])).astype(np.float32)
+        
+        # append obj mask
+        if 'kitti_scene' in self.iml0[index]:
+            fnum = int(self.iml0[index].split('/')[-1].split('_')[0])
+            obj_fname = self.iml0[index].replace('image_2', 'obj_map')
+            #obj_fname = '/home/gengshay/moseg-detectron2/%06d.png'%(fnum)
+            obj_idx = cv2.imread(obj_fname,0)
+        else:
+            fnum = int(self.iml0[index].split('/')[-1].split('.png')[0])
+            obj_fname = '%s/%04d.pfm'%(self.flowl0[index].replace('/optical_flow','object_index').replace('into_past/','/').replace('into_future/','/').rsplit('/',1)[0],fnum)
+            obj_idx = disparity_loader(obj_fname)
+        depthflow = np.concatenate((depthflow,obj_idx[:,:,np.newaxis]),2)
 
         iml1 = np.asarray(iml1)/255.
         iml0 = np.asarray(iml0)/255.
@@ -271,7 +252,7 @@ class myImageFloder(data.Dataset):
             exp_transforms.ChromaticAug( schedule_coeff=schedule_coeff, noise=self.noise),
             ])
 
-        flowl0 = np.concatenate([flowl0,change_size],-1)
+        flowl0 = np.concatenate([flowl0,depthflow],-1)
         augmented,flowl0,intr = co_transform1([iml0, iml1], flowl0, [fl,cx,cy,bl])
         imol0 = augmented[0]
         imol1 = augmented[1]
@@ -280,7 +261,7 @@ class myImageFloder(data.Dataset):
         iml0 = augmented[0]
         iml1 = augmented[1]
         flowl0 = flowl0.astype(np.float32)
-        change_size = flowl0[:,:,3:]
+        depthflow = flowl0[:,:,3:]
         flowl0 = flowl0[:,:,:3]
 
         # randomly cover a region
@@ -299,7 +280,7 @@ class myImageFloder(data.Dataset):
         imol0 = imol0[:,:,::-1].copy()  # RGB
         imol1 = imol1[:,:,::-1].copy()
 
-        return iml0, iml1, flowl0, change_size, intr, imol0, imol1, np.asarray([cx-sx,cx+sx,cy-sy,cy+sy]),RT01
+        return iml0, iml1, flowl0, depthflow, intr, imol0, imol1, np.asarray([cx-sx,cx+sx,cy-sy,cy+sy]),RT01
 
     def __len__(self):
         return len(self.iml0)
