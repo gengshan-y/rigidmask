@@ -346,7 +346,7 @@ class VCN(nn.Module):
         self.midas = torch.hub.load("intel-isl/MiDaS", "MiDaS")
         
         # detection branch
-        from models.det import create_model, load_model, save_model
+        from ..models.det import create_model, load_model, save_model
         self.det = create_model('dla_34', {'hm': 2, 'wh': 36}, 256,num_input=14)
 
         for m in self.modules():
@@ -793,7 +793,7 @@ class VCN(nn.Module):
             pdist=(40*F.interpolate(outputs['wh'] ,im.shape[2:],mode='bilinear'))
             
             if not self.training:
-                from utils.detlib import ctdet_decode
+                from ..utils.detlib import ctdet_decode
                 ### angular
                 #heatmap[:] = 0
                 #fgmask = F.interpolate(0.5+-mcost2.view(1,1,hd,wd), (H,W),mode='bilinear')

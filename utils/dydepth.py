@@ -333,7 +333,7 @@ def testEss(K0,K1,R,T,p1,p2):
     
 def pose_estimate(K0,K1,hp0,hp1,strict_mask,rot,th=0.0001):
     # epipolar geometry
-    from models.submodule import F_ngransac
+    from ..models.submodule import F_ngransac
     tmphp0 = hp0[:,strict_mask]
     tmphp1 = hp1[:,strict_mask]
     #num_samp = min(300000,tmphp0.shape[1])
