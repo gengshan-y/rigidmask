@@ -5,11 +5,22 @@ import os
 #opencv_inc_dir = '/data/tools/opencv/include/' # directory containing OpenCV header files
 #opencv_lib_dir = '/usr/local/lib/' # directory containing OpenCV library files
 
-opencv_inc_dir = os.environ['opencv_inc_dir'] #'' # directory containing OpenCV header files
-opencv_lib_dir = os.environ['opencv_lib_dir'] #'' # directory containing OpenCV library files
+if 'opencv_inc_dir' in os.environ.keys():
+	opencv_inc_dir = os.environ['opencv_inc_dir'] #'' # directory containing OpenCV header files
+else:
+	opencv_inc_dir = ''
+
+if 'opencv_lib_dir' in os.environ.keys():
+	opencv_lib_dir = os.environ['opencv_lib_dir'] #'' # directory containing OpenCV library files
+else:
+	opencv_lib_dir = ''
 
 #if not explicitly provided, we try to locate OpenCV in the current Conda environment
-conda_env = os.environ['CONDA_PREFIX']
+if 'CONDA_PREFIX' in os.environ.keys():
+	conda_env = os.environ['CONDA_PREFIX'] #'' # directory containing OpenCV library files
+else:
+	conda_env = ''
+
 
 if len(conda_env) > 0 and len(opencv_inc_dir) == 0 and len(opencv_lib_dir) == 0:
 	print("Detected active conda environment:", conda_env)
