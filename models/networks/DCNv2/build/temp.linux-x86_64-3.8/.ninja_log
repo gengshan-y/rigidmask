@@ -1,0 +1,8 @@
+# ninja log v5
+0	2854	1632232381732523060	/home/leo/sflow2rigid3d/third_party/rigidmask/models/networks/DCNv2/build/temp.linux-x86_64-3.8/home/leo/sflow2rigid3d/third_party/rigidmask/models/networks/DCNv2/src/cpu/dcn_v2_im2col_cpu.o	1defc69ecb2e98e
+1	3441	1632232382320530245	/home/leo/sflow2rigid3d/third_party/rigidmask/models/networks/DCNv2/build/temp.linux-x86_64-3.8/home/leo/sflow2rigid3d/third_party/rigidmask/models/networks/DCNv2/src/cpu/dcn_v2_psroi_pooling_cpu.o	5fd35cbb3578232
+1	3468	1632232382344530540	/home/leo/sflow2rigid3d/third_party/rigidmask/models/networks/DCNv2/build/temp.linux-x86_64-3.8/home/leo/sflow2rigid3d/third_party/rigidmask/models/networks/DCNv2/src/cpu/dcn_v2_cpu.o	13e9c29c984968b3
+1	8430	1632232387308591238	/home/leo/sflow2rigid3d/third_party/rigidmask/models/networks/DCNv2/build/temp.linux-x86_64-3.8/home/leo/sflow2rigid3d/third_party/rigidmask/models/networks/DCNv2/src/cuda/dcn_v2_cuda.o	3f2733684f999547
+1	8457	1632232387332591532	/home/leo/sflow2rigid3d/third_party/rigidmask/models/networks/DCNv2/build/temp.linux-x86_64-3.8/home/leo/sflow2rigid3d/third_party/rigidmask/models/networks/DCNv2/src/cuda/dcn_v2_im2col_cuda.o	aaba7ab237eb0a0
+1	8488	1632232387364591923	/home/leo/sflow2rigid3d/third_party/rigidmask/models/networks/DCNv2/build/temp.linux-x86_64-3.8/home/leo/sflow2rigid3d/third_party/rigidmask/models/networks/DCNv2/src/cuda/dcn_v2_psroi_pooling_cuda.o	4f6bb982d1d2ce02
+0	13755	1632232392628656344	/home/leo/sflow2rigid3d/third_party/rigidmask/models/networks/DCNv2/build/temp.linux-x86_64-3.8/home/leo/sflow2rigid3d/third_party/rigidmask/models/networks/DCNv2/src/vision.o	2d9efec978c4a5e

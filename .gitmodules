@@ -1,0 +1,3 @@
+[submodule "models/networks/DCNv2_latest"]
+	path = models/networks/DCNv2
+	url = git@github.com:jinfagang/DCNv2_latest.git
