@@ -10,10 +10,14 @@ if 'opencv_inc_dir' in os.environ.keys():
 else:
 	opencv_inc_dir = ''
 
+print('opencv inc dir', opencv_inc_dir)
+
 if 'opencv_lib_dir' in os.environ.keys():
 	opencv_lib_dir = os.environ['opencv_lib_dir'] #'' # directory containing OpenCV library files
 else:
 	opencv_lib_dir = ''
+
+print('opencv lib dir', opencv_lib_dir)
 
 #if not explicitly provided, we try to locate OpenCV in the current Conda environment
 if 'CONDA_PREFIX' in os.environ.keys():
@@ -22,11 +26,12 @@ else:
 	conda_env = ''
 
 
+
 if len(conda_env) > 0 and len(opencv_inc_dir) == 0 and len(opencv_lib_dir) == 0:
 	print("Detected active conda environment:", conda_env)
 	
-	opencv_inc_dir = conda_env + '/include' 
-	opencv_lib_dir = conda_env + '/lib' 
+	opencv_inc_dir = conda_env + '/include'
+	opencv_lib_dir = conda_env + '/lib'
 
 	print("Assuming OpenCV dependencies in:")
 	print(opencv_inc_dir)
@@ -44,8 +49,8 @@ setup(
 	ext_modules=[CppExtension(
 		name='ngransac', 
 		sources=['ngransac.cpp','thread_rand.cpp'],
-		include_dirs=[opencv_inc_dir],
-		library_dirs=[opencv_lib_dir],
+		#include_dirs=[opencv_inc_dir],
+		#library_dirs=[opencv_lib_dir],
 		libraries=['opencv_core','opencv_calib3d'],
 		extra_compile_args=['-fopenmp']
 		)],		
