@@ -495,18 +495,26 @@ def rb_fitting(bgmask_pred,mask_pred,idepth,flow,ent,K0,K1,bl,parallax_th=2,mono
                 tmp = valid_mask.copy()
                 tmp[tmp] = aligned_mask
                 obj_mask = tmp
-            _,rvec, T01_cx=cv2.solvePnP(reg_flow_P.T[obj_mask,np.newaxis],
-                                   hp1[:2].T[obj_mask,np.newaxis], K0, 0, 
-                                   flags=cv2.SOLVEPNP_DLS)
-            _,rvec, T01_cx=cv2.solvePnP(reg_flow_P.T[obj_mask,np.newaxis],
-                                       hp1[:2].T[obj_mask,np.newaxis], K0, 0,rvec, T01_cx,useExtrinsicGuess=True, 
-                                       flags=cv2.SOLVEPNP_ITERATIVE)
-            R01x = cv2.Rodrigues(rvec)[0].T
-            T01_cx = -R01x.dot(T01_cx)[:,0]
-            if T01_cx is None:
+            #if reg_flow_P.T[obj_mask,np.newaxis].shape[0] < 4 and reg_flow_P.T[obj_mask,np.newaxis].shape[2] < 4:
+            #    print('reg_flow', reg_flow_P.T[obj_mask,np.newaxis])
+            #    print('hp1', hp1[:2].T[obj_mask,np.newaxis])
+            #    print('K0', K0)
+            if obj_mask.sum() >= 4:
+                # extra checking because of aligned_mask (aligned triangulation) there is another restriction of points
+                _,rvec, T01_cx=cv2.solvePnP(reg_flow_P.T[obj_mask,np.newaxis],
+                                       hp1[:2].T[obj_mask,np.newaxis], K0, 0,
+                                       flags=cv2.SOLVEPNP_DLS)
+                _,rvec, T01_cx=cv2.solvePnP(reg_flow_P.T[obj_mask,np.newaxis],
+                                           hp1[:2].T[obj_mask,np.newaxis], K0, 0,rvec, T01_cx,useExtrinsicGuess=True,
+                                           flags=cv2.SOLVEPNP_ITERATIVE)
+                R01x = cv2.Rodrigues(rvec)[0].T
+                T01_cx = -R01x.dot(T01_cx)[:,0]
+                if T01_cx is None:
+                    RT01=None
+                else:
+                    RT01 = [R01x, T01_cx]
+            else:
                 RT01=None
-            else:                        
-                RT01 = [R01x, T01_cx]
         RTs.append(RT01)
 
     return scene_type, T01_c, R01,RTs
