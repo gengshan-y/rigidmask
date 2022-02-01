@@ -749,6 +749,7 @@ class VCN(nn.Module):
                                         mcost4.view(bs,1,h,w).detach(),
                             3*      log_dratio.view(bs,1,h,w).detach(),
                                 ),1)
+            # fgmask: prelogits of 0-1 probability foreground vs background
             fgmask = (fg_va * fg_hps).sum(1, keepdims=True) + fg_res
             fgmask = F.upsample(fgmask, [im.size()[2],im.size()[3]], mode='bilinear')
 
@@ -788,6 +789,8 @@ class VCN(nn.Module):
                         ),1)
 
             outputs = self.det(F.interpolate(costs, im.shape[2:],mode='bilinear' ))[0]
+            # heatmap: 0-1 probability values representing object centers 
+            # (may include multiple objs)
             heatmap_logits = (F.interpolate(outputs['hm'] ,im.shape[2:],mode='bilinear'))
             heatmap = heatmap_logits.softmax(1)[:,:1]
             pdist=(40*F.interpolate(outputs['wh'] ,im.shape[2:],mode='bilinear'))
@@ -799,6 +802,7 @@ class VCN(nn.Module):
                 #fgmask = F.interpolate(0.5+-mcost2.view(1,1,hd,wd), (H,W),mode='bilinear')
 
                 p03d = F.interpolate(p03d.view(1,3,hd,wd),im.shape[2:],mode='bilinear')
+                # polarmask: {0,...N-1} segmentation label of foreground objects    
                 polarmask = ctdet_decode(heatmap, pdist,p03d=p03d)
 
         if self.training:
