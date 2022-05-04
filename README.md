@@ -44,7 +44,7 @@ The code is tested with python 3.8, pytorch 1.7.0, and CUDA 10.2. Install depend
 ```
 conda env create -f rigidmask.yml
 conda activate rigidmask_v0
-pip install kornia
+conda install -c conda-forge kornia=0.5.3 # install a compatible korna version
 python -m pip install detectron2 -f \
   https://dl.fbaipublicfiles.com/detectron2/wheels/cu102/torch1.7/index.html
 ```
