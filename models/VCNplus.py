@@ -607,7 +607,7 @@ class VCN(nn.Module):
             H,W = im.size()[2:4]
             flow = 4*F.upsample(flow2, [H,W], mode='bilinear').detach()
             oor2 = F.upsample(oor2[:,np.newaxis], [H,W], mode='bilinear').detach()[:,0]
-            tau = (-dchange2[:,0]).exp().detach()
+            tau = (-dchange2[:,0]).exp().detach() # tau is defined as Z0/Z1, which is the inverse of tau in the paper
 
             # use different number of correspondences for bg, obj segmentation and pose
             if self.training:
