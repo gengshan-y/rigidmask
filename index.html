@@ -1,0 +1,240 @@
+<!-- saved from url=(0047)https://www.cs.cmu.edu/~peiyunh/tiny/index.html -->
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <link rel="StyleSheet" href="./cvpr21rigidmask/style.css" type="text/css" media="all">
+
+  <title>Learning to Segment Rigid Motions from Two Frames</title>
+  <style type="text/css">
+    body {
+      font-family: Arial;
+      background-color: #f2f2f2;
+      font-size: 15px;
+    }
+
+    .content {
+      width: 800px;
+      padding: 25px 25px;
+      margin: 25px auto;
+      background-color: #fff;
+      border-radius: 20px;
+    }
+
+    .description {
+      font-family: "Times";
+      white-space: pre;
+      text-align: left;
+    }
+
+    .content-title {
+      background-color: inherit;
+      margin-top: 5px;
+      padding-top: 5px;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    a,
+    a:visited {
+      text-decoration: none;
+      color: blue;
+    }
+
+    .anchor {
+      color: inherit;
+    }
+
+    #authors {
+      text-align: center;
+    }
+
+    #conference {
+      text-align: center;
+      font-style: italic;
+    }
+
+    #authors a {
+      margin: 0 10px;
+    }
+
+    h1 {
+      text-align: center;
+      font-family: Arial;
+      font-size: 30px;
+    }
+
+    h2 {
+      font-family: Arial;
+      font-size: 25px;
+      padding: 0;
+      margin: 10px;
+    }
+
+    h3 {
+      font-family: Arial;
+      font-size: 20px;
+      padding: 0;
+      margin: 10px;
+    }
+
+    p {
+      line-height: 130%;
+      margin: 10px;
+    }
+
+    li {
+      margin: 10px 0;
+    }
+
+    .samples {
+      float: left;
+      width: 50%;
+      text-align: center;
+    }
+
+    .cond {
+      float: left;
+      margin: 0 40px;
+    }
+
+    .cond-container {
+      width: 700px;
+      margin: 0 auto;
+      text-align: center;
+    }
+  </style>
+
+</head>
+
+
+
+<body>
+
+  <div class="content content-title" style="text-align: center">
+    <h1>Learning to Segment Rigid Motions from Two Frames</h1>
+    <big style="color:grey;">
+      CVPR 2021
+    </big>
+    <p id="authors">
+    <table align="center" style="width:60%; text-align:center; table-layout: fixed">
+      <tr>
+        <th><a href="https://gengshan-y.github.io/">Gengshan Yang<sup>1</sup></a></th>
+        <th><a href="http://www.cs.cmu.edu/~deva/">Deva Ramanan<sup>1,2</sup></a></th>
+      </tr>
+    </table>
+    <sup>1</sup>Robotics Institute, Carnegie Mellon University<br>
+    <sup>2</sup>Argo AI
+    </p>
+    <p>
+    </p>
+  </div>
+
+
+
+
+  <div class="content">
+    <figure style="font-style: italic; font-weight: normal; margin: 0px; padding: 0px; border: 0px; text-align: left">
+      <video autoplay controls loop muted width="810" height="320">
+        <source src="./cvpr21rigidmask/rigidmask-teaser.mp4" type="video/mp4">
+      </video>
+      <br>
+      <figcaption> We propose a neural architecture powered by geometric reasoning that decomposes two frames into a
+        rigid background and multiple moving rigid bodies, parameterized by 3D rigid transformations and depth.
+    </figure>
+  </div>
+
+
+
+
+
+
+  <div class="content">
+    <h2>Abstract</h2>
+    <p>
+      Appearance-based detectors achieve remarkable performance on common scenes, benefiting from high-capacity models
+      and massive annotated data, but tend to fail for scenarios that lack training data. Geometric motion segmentation
+      algorithms, however, generalize to novel scenes, but have yet to achieve comparable performance to
+      appearance-based ones, due to noisy motion estimations and degenerate motion configurations. To combine the best
+      of both worlds, we propose a modular network, whose architecture is motivated by a geometric analysis of what
+      independent object motions can be recovered from an ego-motion field. It takes two consecutive frames as input and
+      predicts segmentation masks for the background and multiple rigidly moving objects, which are then parameterized
+      by 3D rigid transformations. Our method achieves state-of-the-art performance for rigid motion segmentation on
+      KITTI and Sintel. The inferred rigid motions lead to a significant improvement for depth and scene flow
+      estimation.
+    </p>
+    <div id="teaser" style="margin: 12px; text-align: left;border-top: 1px solid lightgray;padding-top: 12px;">
+      <a
+        href="https://openaccess.thecvf.com/content/CVPR2021/papers/Yang_Learning_To_Segment_Rigid_Motions_From_Two_Frames_CVPR_2021_paper.pdf">
+        <strong>[Paper]</strong>
+      </a>
+      <a
+        href="https://openaccess.thecvf.com/content/CVPR2021/supplemental/Yang_Learning_To_Segment_CVPR_2021_supplemental.pdf">
+        <strong>[Supp]</strong>
+      </a>
+      <a href="https://docs.google.com/presentation/d/1AfF-zPKAWenPXUnFqTQmJaSgIQ90kfhse39d950za_k/edit?usp=sharing">
+        <strong>[Slides]</strong>
+      </a>
+      <a href="./cvpr21rigidmask/rigidmask-poster.pdf">
+        <strong>[Poster]</strong>
+      </a>
+    </div>
+  </div>
+
+  <div class="content">
+    <h2>Bibtex</h2>
+    <p class="description">
+      @inproceedings{yang2021rigidmask,
+      title={Learning to Segment Rigid Motions from Two Frames},
+      author={Yang, Gengshan and Ramanan, Deva},
+      booktitle={CVPR},
+      year={2021}
+      }
+    </p>
+  </div>
+
+
+  <div id="vid" class="content">
+    <h2>Video</h2>
+    <iframe width="560" height="315" src="https://www.youtube.com/embed/lsPpM6AjXqA" title="YouTube video player"
+      frameborder="0"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+      allowfullscreen></iframe>
+    <div id="teaser" style="margin: 12px; text-align: left;border-top: 1px solid lightgray;padding-top: 12px;">
+    </div>
+  </div>
+
+  <div class="content">
+    <div style="float: right; width:70px; margin-top: 0px; margin-bottom: 25px">
+      <a href="https://github.com/gengshan-y/">
+        <img src="./github.png" width="100%" alt="github">
+      </a>
+    </div>
+    <h2>Code</h2>
+    <p>
+      Code is available <a href="https://github.com/gengshan-y/rigidmask">here.</a>
+    </p>
+  </div>
+
+  <div class="content">
+    <h2>Acknowledgments</h2>
+    <p>This work was supported by the <a href="https://labs.ri.cmu.edu/argo-ai-center/">CMU Argo AI Center for
+        Autonomous Vehicle Research</a>. We thank Rui Zhu for proving the code of single-image camera intrinsics
+      estimation. We thank Jason Zhang, Tarasha Khurana, Jessica Lee and many others for their useful feedback.</p>
+  </div>
+
+  <table width="100%" align="center" border="0" cellspacing="0" cellpadding="20">
+    <tr>
+      <td>
+        <p align="right">
+          <font size="2">
+            <a href="https://www.cs.cmu.edu/~peiyunh/">Webpage design borrowed from Peiyun Hu</a>
+          </font>
+        </p>
+      </td>
+    </tr>
+  </table>
+
+</body>
+
+</html>
